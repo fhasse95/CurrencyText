@@ -5,6 +5,9 @@
 //  Created by Felipe Lefèvre Marino on 12/26/18.
 //
 
+#if os(watchOS)
+#else
+
 import UIKit
 
 public extension UITextField {
@@ -59,3 +62,5 @@ public extension UITextField {
         }
     }
 }
+
+#endif

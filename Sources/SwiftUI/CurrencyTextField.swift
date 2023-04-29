@@ -5,6 +5,9 @@
 //  Created by Marino Felipe on 12.04.21.
 //
 
+#if os(watchOS)
+#else
+
 import Combine
 import SwiftUI
 
@@ -130,3 +133,5 @@ public struct CurrencyTextField: UIViewRepresentable {
         }
     }
 }
+
+#endif

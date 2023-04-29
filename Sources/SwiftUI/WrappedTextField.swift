@@ -5,6 +5,9 @@
 //  Created by Marino Felipe on 24.04.21.
 //
 
+#if os(watchOS)
+#else
+
 import Combine
 import UIKit
 
@@ -126,3 +129,5 @@ private extension WrappedTextField {
         )
     }
 }
+
+#endif

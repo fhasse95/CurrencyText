@@ -5,6 +5,9 @@
 //  Created by Marino Felipe on 11.04.21.
 //
 
+#if os(watchOS)
+#else
+
 #if canImport(CurrencyFormatter)
 import CurrencyFormatter
 #endif
@@ -117,3 +120,4 @@ public final class CurrencyTextFieldConfiguration {
         self.textFieldConfiguration = textFieldConfiguration
     }
 }
+#endif

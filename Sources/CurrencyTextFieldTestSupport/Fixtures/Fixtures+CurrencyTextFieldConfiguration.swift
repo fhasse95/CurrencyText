@@ -5,6 +5,9 @@
 //  Created by Marino Felipe on 25.04.21.
 //
 
+#if os(watchOS)
+#else
+
 import SwiftUI
 
 #if canImport(CurrencyFormatter)
@@ -58,3 +61,5 @@ public extension CurrencyTextFieldConfiguration {
         )
     }
 }
+
+#endif

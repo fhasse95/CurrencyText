@@ -6,6 +6,9 @@
 //  Copyright © 2018 Felipe Lefèvre Marino. All rights reserved.
 //
 
+#if os(watchOS)
+#else
+
 import UIKit
 
 #if canImport(CurrencyFormatter)
@@ -186,3 +189,5 @@ extension CurrencyUITextFieldDelegate {
         textField.text = formatter.formattedStringWithAdjustedDecimalSeparator(from: updatedText)
     }
 }
+
+#endif
