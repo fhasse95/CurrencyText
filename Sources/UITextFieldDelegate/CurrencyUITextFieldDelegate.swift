@@ -136,8 +136,7 @@ extension CurrencyUITextFieldDelegate {
         if string == .negativeSymbol && textField.text?.isEmpty == true {
             textField.text = .negativeSymbol
         } else if range.lowerBound == 0 && string == .negativeSymbol &&
-            textField.text?.contains(String.negativeSymbol) == false {
-            
+            textField.text?.isNegative == false {
             textField.text = .negativeSymbol + (textField.text ?? "")
         }
     }

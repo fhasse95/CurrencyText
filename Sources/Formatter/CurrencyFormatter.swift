@@ -329,8 +329,7 @@ extension CurrencyFormatter: CurrencyAdjusting {
     /// - Returns: The received String with numeral format and with its decimal separator adjusted
     private func numeralStringWithAdjustedDecimalSeparator(from string: String) -> String {
         var updatedString = string.numeralFormat()
-        let isNegative: Bool = string.contains(String.negativeSymbol)
-
+        let isNegative: Bool = string.isNegative
         updatedString = isNegative ? .negativeSymbol + updatedString : updatedString
         updatedString.updateDecimalSeparator(decimalDigits: decimalDigits)
 

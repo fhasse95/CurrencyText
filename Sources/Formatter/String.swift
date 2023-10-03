@@ -65,5 +65,12 @@ extension String: CurrencyString {
 // MARK: - Static constants
 
 extension String {
+    public var isNegative: Bool {
+        // Check if the value is negative using the minus hyphen (U+002D) and sign (U+2212).
+        return self.contains(String.negativeSymbol) ||
+            self.contains(String.minusSymbol)
+    }
+    
     public static let negativeSymbol = "-"
+    public static let minusSymbol = "−"
 }
