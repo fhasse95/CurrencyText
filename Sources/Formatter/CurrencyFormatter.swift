@@ -316,7 +316,7 @@ extension CurrencyFormatter: CurrencyAdjusting {
     ///
     /// - Parameter string: The currency formatted String
     /// - Returns: The currency formatted String, or the formatted version of its closes allowed value, min or max, depending on the closest boundary.
-    public func formattedStringAdjustedToFitAllowedValues(from string: String) -> String? {
+    @objc open func formattedStringAdjustedToFitAllowedValues(from string: String) -> String? {
         let adjustedString = numeralStringWithAdjustedDecimalSeparator(from: string)
         guard let originalValue = double(from: adjustedString) else { return nil }
 
