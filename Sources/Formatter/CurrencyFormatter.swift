@@ -11,7 +11,9 @@ import Foundation
 
 public protocol CurrencyFormatting {
     var maxDigitsCount: Int { get }
+    var hasDecimals: Bool { get }
     var decimalDigits: Int { get set }
+    var decimalSeparator: String { get set }
     var maxValue: Double? { get set }
     var minValue: Double? { get set }
     var initialText: String { get }
@@ -29,7 +31,7 @@ public protocol CurrencyAdjusting {
 
 // MARK: - Currency formatter
 
-public class CurrencyFormatter: CurrencyFormatting {
+open class CurrencyFormatter: CurrencyFormatting {
     
     /// Set the locale to retrieve the currency from
     /// You can pass a Swift type Locale or one of the
@@ -206,7 +208,7 @@ public class CurrencyFormatter: CurrencyFormatting {
     }
     
     /// Encapsulated Number formatter
-    let numberFormatter: NumberFormatter
+    public let numberFormatter: NumberFormatter
     
     /// Maximum allowed number of integers
     public var maxIntegers: Int? {
@@ -274,18 +276,18 @@ extension CurrencyFormatter {
     /// - Parameter string: currency formatted string
     /// - Returns: numerical representation
     public func unformatted(string: String) -> String? {
-        if hasDecimals {
-            return string.trimmingCharacters(
-                in: CharacterSet(
-                    charactersIn: "0123456789\(decimalSeparator)"
-                )
-                .inverted
-            )
-            .replacingOccurrences(of: groupingSeparator, with: "")
-            .replacingOccurrences(of: decimalSeparator, with: ".")
-        } else {
-            return string.numeralFormat()
+        var result = string.trimmingCharacters(
+            in: CharacterSet(
+                charactersIn: "0123456789\(self.decimalSeparator)"
+            ).inverted
+        ).replacingOccurrences(of: self.groupingSeparator, with: "")
+         .replacingOccurrences(of: self.decimalSeparator, with: ".")
+        
+        if result.last == "." {
+            result = String(result.dropLast())
         }
+        
+        return result
     }
 }
 
@@ -303,7 +305,7 @@ extension CurrencyFormatter: CurrencyAdjusting {
     ///
     /// - Parameter string: The currency formatted String
     /// - Returns: The currency formatted received String with separators adjusted
-    public func formattedStringWithAdjustedDecimalSeparator(from string: String) -> String? {
+    @objc open func formattedStringWithAdjustedDecimalSeparator(from string: String) -> String? {
         let adjustedString = numeralStringWithAdjustedDecimalSeparator(from: string)
         guard let value = double(from: adjustedString) else { return nil }
 
@@ -327,7 +329,7 @@ extension CurrencyFormatter: CurrencyAdjusting {
     ///
     /// - Parameter string: The currency formatted String
     /// - Returns: The received String with numeral format and with its decimal separator adjusted
-    private func numeralStringWithAdjustedDecimalSeparator(from string: String) -> String {
+    @objc open func numeralStringWithAdjustedDecimalSeparator(from string: String) -> String {
         var updatedString = string.numeralFormat()
         let isNegative: Bool = string.isNegative
         updatedString = isNegative ? .negativeSymbol + updatedString : updatedString

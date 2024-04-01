@@ -36,22 +36,24 @@ public extension UITextField {
     /// Adjust the selected text range to match the best position.
     private func adjustSelectedTextRange(lastOffsetFromEnd: Int) {
         /// If text is empty the offset is set to zero, the selected text range does need to be changed.
-        if let text = text, text.isEmpty {
+        guard let text = text, !text.isEmpty
+        else {
             return
         }
-
+        
         var offsetFromEnd = lastOffsetFromEnd
-
+        
         /// Adjust offset if needed. When the last number character offset from end is less than the current offset,
         /// or in other words, is more distant to the end of the string, the offset is readjusted to it,
         /// so the selected text range is correctly set to the last index with a number.
-        if let lastNumberOffsetFromEnd = text?.lastNumberOffsetFromEnd,
-            case let shouldOffsetBeAdjusted = lastNumberOffsetFromEnd < offsetFromEnd,
-            shouldOffsetBeAdjusted {
-
-            offsetFromEnd = lastNumberOffsetFromEnd
+        if let lastNumberOffsetFromEnd = text.lastNumberOffsetFromEnd {
+            let lastOffsetFromEnd = max(lastNumberOffsetFromEnd,
+                text.lastDecimalSeparatorOffsetFromEnd ?? lastNumberOffsetFromEnd)
+            if case let shouldOffsetBeAdjusted = lastOffsetFromEnd < offsetFromEnd, shouldOffsetBeAdjusted {
+                offsetFromEnd = lastOffsetFromEnd
+            }
         }
-
+        
         updateSelectedTextRange(offsetFromEnd: offsetFromEnd)
     }
 

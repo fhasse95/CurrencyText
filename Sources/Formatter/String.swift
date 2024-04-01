@@ -12,6 +12,7 @@ public protocol CurrencyString {
     var representsZero: Bool { get }
     var hasNumbers: Bool { get }
     var lastNumberOffsetFromEnd: Int? { get }
+    var lastDecimalSeparatorOffsetFromEnd: Int? { get }
     func numeralFormat() -> String
     mutating func updateDecimalSeparator(decimalDigits: Int)
 }
@@ -35,11 +36,28 @@ extension String: CurrencyString {
     /// e.g. For the String "123some", the last number position is 4, because from the _end index_ to the index of _3_
     /// there is an offset of 4, "e, m, o and s".
     public var lastNumberOffsetFromEnd: Int? {
-        guard let indexOfLastNumber = lastIndex(where: { $0.isNumber }) else { return nil }
+        guard let indexOfLastNumber = lastIndex(where: { $0.isNumber })
+        else {
+            return nil
+        }
+        
         let indexAfterLastNumber = index(after: indexOfLastNumber)
         return distance(from: endIndex, to: indexAfterLastNumber)
     }
-
+    
+    /// The offset from end index to the index _right after_ the last decimal separator in the String.
+    /// e.g. For the String "123,some", the last number position is 4, because from the _end index_ to the index of _3_
+    /// there is an offset of 4, "e, m, o and s".
+    public var lastDecimalSeparatorOffsetFromEnd: Int? {
+        guard let indexOfLastNumber = lastIndex(where: { $0 == "," || $0 == "." })
+        else {
+            return nil
+        }
+        
+        let indexAfterLastNumber = index(after: indexOfLastNumber)
+        return distance(from: endIndex, to: indexAfterLastNumber)
+    }
+    
     // MARK: Functions
     
     /// Updates a currency string decimal separator position based on
