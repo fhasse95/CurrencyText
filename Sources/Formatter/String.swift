@@ -49,7 +49,9 @@ extension String: CurrencyString {
     /// e.g. For the String "123,some", the last number position is 4, because from the _end index_ to the index of _3_
     /// there is an offset of 4, "e, m, o and s".
     public var lastDecimalSeparatorOffsetFromEnd: Int? {
-        guard let indexOfLastNumber = lastIndex(where: { $0 == "," || $0 == "." })
+        guard let indexOfLastNumber = lastIndex(where: {
+            $0 == Character(Locale.autoupdatingCurrent.decimalSeparator ?? ".")
+        })
         else {
             return nil
         }
