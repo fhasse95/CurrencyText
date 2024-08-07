@@ -282,6 +282,7 @@ extension CurrencyFormatter {
             ).inverted
         ).replacingOccurrences(of: self.groupingSeparator, with: "")
          .replacingOccurrences(of: self.decimalSeparator, with: ".")
+         .replacingOccurrences(of: self.currencySymbol, with: "")
         
         if result.last == "." {
             result = String(result.dropLast())

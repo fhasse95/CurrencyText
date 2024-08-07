@@ -57,7 +57,7 @@ extension CurrencyUITextFieldDelegate: UITextFieldDelegate {
     }
     
     public func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.setInitialSelectedTextRange()
+        textField.setInitialSelectedTextRange(currencySymbol: self.formatter.currencySymbol)
         passthroughDelegate?.textFieldDidBeginEditing?(textField)
     }
     
@@ -94,7 +94,9 @@ extension CurrencyUITextFieldDelegate: UITextFieldDelegate {
         // Before leaving the scope, update selected text range,
         // respecting previous selected text range offset from end.
         defer {
-            textField.updateSelectedTextRange(lastOffsetFromEnd: lastSelectedTextRangeOffsetFromEnd)
+            textField.updateSelectedTextRange(
+                lastOffsetFromEnd: lastSelectedTextRangeOffsetFromEnd,
+                currencySymbol: self.formatter.currencySymbol)
         }
 
         let returnAndCallPassThroughDelegate: () -> Bool = {

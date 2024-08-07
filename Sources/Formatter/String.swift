@@ -11,8 +11,8 @@ import Foundation
 public protocol CurrencyString {
     var representsZero: Bool { get }
     var hasNumbers: Bool { get }
-    var lastNumberOffsetFromEnd: Int? { get }
-    var lastDecimalSeparatorOffsetFromEnd: Int? { get }
+    var lastRelevantCharacterOffsetFromEnd: Int? { get }
+    var lastRelevantCharacterOffsetFromStart: Int? { get }
     func numeralFormat() -> String
     mutating func updateDecimalSeparator(decimalDigits: Int)
 }
@@ -31,33 +31,29 @@ extension String: CurrencyString {
     public var hasNumbers: Bool {
         return numeralFormat().count > 0
     }
-
-    /// The offset from end index to the index _right after_ the last number in the String.
-    /// e.g. For the String "123some", the last number position is 4, because from the _end index_ to the index of _3_
-    /// there is an offset of 4, "e, m, o and s".
-    public var lastNumberOffsetFromEnd: Int? {
-        guard let indexOfLastNumber = lastIndex(where: { $0.isNumber })
-        else {
-            return nil
+    
+    /// Find the offset from the end of the last relevant character (number or decimal separator)
+    public var lastRelevantCharacterOffsetFromEnd: Int? {
+        let relevantCharacters = CharacterSet.decimalDigits.union(
+            CharacterSet(charactersIn: Locale.autoupdatingCurrent.decimalSeparator ?? "."))
+        for (index, character) in self.reversed().enumerated() {
+            if String(character).rangeOfCharacter(from: relevantCharacters) != nil {
+                return self.distance(from: self.endIndex, to: self.index(self.endIndex, offsetBy: -index))
+            }
         }
-        
-        let indexAfterLastNumber = index(after: indexOfLastNumber)
-        return distance(from: endIndex, to: indexAfterLastNumber)
+        return nil
     }
     
-    /// The offset from end index to the index _right after_ the last decimal separator in the String.
-    /// e.g. For the String "123,some", the last number position is 4, because from the _end index_ to the index of _3_
-    /// there is an offset of 4, "e, m, o and s".
-    public var lastDecimalSeparatorOffsetFromEnd: Int? {
-        guard let indexOfLastNumber = lastIndex(where: {
-            $0 == Character(Locale.autoupdatingCurrent.decimalSeparator ?? ".")
-        })
-        else {
-            return nil
+    /// Find the offset from the start of the last relevant character (number or decimal separator)
+    public var lastRelevantCharacterOffsetFromStart: Int? {
+        let relevantCharacters = CharacterSet.decimalDigits.union(
+            CharacterSet(charactersIn: Locale.autoupdatingCurrent.decimalSeparator ?? "."))
+        for (index, character) in self.enumerated() {
+            if String(character).rangeOfCharacter(from: relevantCharacters) != nil {
+                return self.distance(from: self.startIndex, to: self.index(self.startIndex, offsetBy: index))
+            }
         }
-        
-        let indexAfterLastNumber = index(after: indexOfLastNumber)
-        return distance(from: endIndex, to: indexAfterLastNumber)
+        return nil
     }
     
     // MARK: Functions
