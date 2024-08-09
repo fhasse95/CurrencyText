@@ -24,18 +24,18 @@ public extension UITextField {
         currencySymbol: String,
         checkLanguageAlignment: Bool = true) {
         self.adjustSelectedTextRange(
-            lastOffsetFromEnd: 0,
+            previousOffset: 0,
             currencySymbol,
             checkLanguageAlignment)
     }
     
     /// Interface to update the selected text range as expected.
     func updateSelectedTextRange(
-        lastOffsetFromEnd: Int,
+        previousOffset: Int,
         currencySymbol: String,
         checkLanguageAlignment: Bool = true) {
         self.adjustSelectedTextRange(
-            lastOffsetFromEnd: lastOffsetFromEnd,
+            previousOffset: previousOffset,
             currencySymbol,
             checkLanguageAlignment)
     }
@@ -44,31 +44,42 @@ public extension UITextField {
 
     /// Adjust the selected text range to match the best position.
     private func adjustSelectedTextRange(
-        lastOffsetFromEnd: Int,
+        previousOffset: Int,
         _ currencySymbol: String,
         _ checkLanguageAlignment: Bool = true) {
         
-        /// If text is empty the offset is set to zero, the selected text range does need to be changed.
-        guard var text = self.text?.replacingOccurrences(of: currencySymbol, with: ""), !text.isEmpty
+        /// If the text is empty the offset is set to zero, the selected text range does need to be changed.
+        guard let text = self.text?.replacingOccurrences(of: currencySymbol, with: ""), !text.isEmpty
         else {
             return
         }
         
-        var offsetFromEnd = lastOffsetFromEnd
+        var offset = previousOffset
         let isRightAlignedLanguage = checkLanguageAlignment && text.contains("\u{200f}")
         
-        /// Find the last number or decimal separator offset from end.
+        /// Find the last number or decimal separator offset from start / end.
         if let lastRelevantOffset = isRightAlignedLanguage ?
             text.lastRelevantCharacterOffsetFromStart :
             text.lastRelevantCharacterOffsetFromEnd {
-            if lastRelevantOffset < offsetFromEnd {
-                offsetFromEnd = lastRelevantOffset
+            if lastRelevantOffset < offset {
+                offset = lastRelevantOffset
             }
         }
         
-        self.updateSelectedTextRange(
-            offsetFromEnd - (isRightAlignedLanguage ? 0 : currencySymbol.count),
-            checkLanguageAlignment)
+        /// Update the offset to include the currency symbol (if necessary).
+        switch isRightAlignedLanguage {
+        case true:
+            if self.text?.hasPrefix(currencySymbol) ?? false {
+                offset += currencySymbol.count
+            }
+            
+        case false:
+            if self.text?.hasSuffix(currencySymbol) ?? false {
+                offset -= currencySymbol.count
+            }
+        }
+        
+        self.updateSelectedTextRange(offset, checkLanguageAlignment)
     }
     
     /// Update the selected text range with given offset from end.

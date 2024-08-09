@@ -95,7 +95,7 @@ extension CurrencyUITextFieldDelegate: UITextFieldDelegate {
         // respecting previous selected text range offset from end.
         defer {
             textField.updateSelectedTextRange(
-                lastOffsetFromEnd: lastSelectedTextRangeOffsetFromEnd,
+                previousOffset: lastSelectedTextRangeOffsetFromEnd,
                 currencySymbol: self.formatter.currencySymbol)
         }
 
