@@ -276,13 +276,20 @@ extension CurrencyFormatter {
     /// - Parameter string: currency formatted string
     /// - Returns: numerical representation
     public func unformatted(string: String) -> String? {
-        var result = string.trimmingCharacters(
-            in: CharacterSet(
-                charactersIn: "0123456789\(self.decimalSeparator)"
-            ).inverted
-        ).replacingOccurrences(of: self.groupingSeparator, with: "")
-         .replacingOccurrences(of: self.decimalSeparator, with: ".")
-         .replacingOccurrences(of: self.currencySymbol, with: "")
+        var result = string
+            .trimmingCharacters(in: CharacterSet.decimalDigits
+                .union(CharacterSet(charactersIn: "\(self.decimalSeparator)")).inverted)
+            .replacingOccurrences(of: self.groupingSeparator, with: "")
+            .replacingOccurrences(of: self.decimalSeparator, with: ".")
+            .replacingOccurrences(of: self.currencySymbol, with: "")
+        
+        let formatter = NumberFormatter()
+        formatter.locale = Locale.autoupdatingCurrent
+        for number in 0...9 {
+            if let localizedDigit = formatter.string(from: NSNumber(value: number)) {
+                result = result.replacingOccurrences(of: localizedDigit, with: "\(number)")
+            }
+        }
         
         if result.last == "." {
             result = String(result.dropLast())

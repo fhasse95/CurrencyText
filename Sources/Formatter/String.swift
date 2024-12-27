@@ -74,7 +74,17 @@ extension String: CurrencyString {
     ///
     /// - Returns: itself without the non numerical characters occurrences
     public func numeralFormat() -> String {
-        return replacingOccurrences(of:"[^0-9]", with: "", options: .regularExpression)
+        let formatter = NumberFormatter()
+        formatter.locale = Locale.autoupdatingCurrent
+        
+        var result = self
+        for number in 0...9 {
+            if let localizedDigit = formatter.string(from: NSNumber(value: number)) {
+                result = result.replacingOccurrences(of: localizedDigit, with: "\(number)")
+            }
+        }
+        
+        return result.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
     }
 }
 
